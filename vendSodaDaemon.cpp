@@ -15,6 +15,18 @@
 
 using namespace std;
 
+#ifdef DEBUG
+String getTime()
+{
+    time_t *rawtime;
+    struct tm *timeinfo;
+    time (rawtime);
+    timeinfo = localtime(rawtime);
+
+    return asctime(timeinfo);
+}
+#endif
+
 int main()
 {
 	char slotChoice[256];
@@ -73,7 +85,13 @@ int main()
 	
 	// Make the sodamachine object
 	serialDriver acmSoda("/dev/ttyS0", "output");
-	
+
+#ifdef DEBUG
+  vendLog.open(DEBUG_LOG, fstream::out);
+  vendLog << "\n\nOpened logging at " << getTime() << "\n";
+  vendLog.close();
+#endif
+
 	while(1)
 	{
 #ifdef DEBUG
@@ -85,12 +103,7 @@ int main()
 		vendPipeIn.getline(slotChoice, 256);
 
 #ifdef DEBUG
-    time_t *rawtime;
-    struct tm *timeinfo;
-    time (rawtime);
-    timeinfo = localtime(rawtime);
-
-    vendLog << asctime(timeinfo);
+    vendLog << getTime();
     vendLog << slotChoice;
     
 #endif  
