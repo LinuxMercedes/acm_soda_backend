@@ -16,7 +16,7 @@
 using namespace std;
 
 #ifdef DEBUG
-string getTime()
+char* getTime()
 {
     time_t *rawtime;
     struct tm *timeinfo;
