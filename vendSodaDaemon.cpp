@@ -9,7 +9,7 @@
 #define DEBUG 1
 
 #ifdef DEBUG
-#define DEBUG_LOG "/tmp/vendsodalog"
+#define DEBUG_LOG "/var/log/vendsoda.log"
 #include <time.h>
 #endif
 
