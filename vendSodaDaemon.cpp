@@ -18,12 +18,10 @@ using namespace std;
 #ifdef DEBUG
 char* getTime()
 {
-    time_t *rawtime;
-    struct tm *timeinfo;
-    time (rawtime);
-    timeinfo = localtime(rawtime);
-
-    return asctime(timeinfo);
+  time_t rawtime;
+  struct tm * timeinfo;
+  timeinfo = localtime(&rawtime);
+  return asctime(timeinfo);
 }
 #endif
 
@@ -87,15 +85,16 @@ int main()
 	serialDriver acmSoda("/dev/ttyS0", "output");
 
 #ifdef DEBUG
-  vendLog.open(DEBUG_LOG, fstream::out);
-  vendLog << "\n\nOpened logging at " << getTime() << "\n";
+  vendLog.open(DEBUG_LOG, fstream::out | fstream::app);
+  vendLog << "\n\nOpened debugging at " << static_cast<string>(getTime()) << "\n\n";
+  vendLog.flush();
   vendLog.close();
 #endif
 
 	while(1)
 	{
 #ifdef DEBUG
-    vendLog.open(DEBUG_LOG, fstream::out);
+    vendLog.open(DEBUG_LOG, fstream::out | fstream::app);
 #endif
 
     vendPipeIn.open(PIPE_IN_NAME, fstream::in);
@@ -103,8 +102,7 @@ int main()
 		vendPipeIn.getline(slotChoice, 256);
 
 #ifdef DEBUG
-    vendLog << getTime() << " " << slotChoice << "\n";
-    
+    vendLog << static_cast<string>(getTime()) << " Vended soda " << static_cast<string>(slotChoice) << endl;
 #endif  
 
     vendSuccess = acmSoda.VendCan(atoi(slotChoice));
@@ -118,9 +116,11 @@ int main()
 		vendPipeOut<<vendSuccess;
 #ifdef DEBUG
     vendLog << vendSuccess << "\n\n";
+    vendLog.flush();
     vendLog.close();
 #endif
 
+    vendPipeOut.flush();
 		vendPipeOut.close();
 	}
 	return 0;
