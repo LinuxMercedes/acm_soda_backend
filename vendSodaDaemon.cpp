@@ -36,7 +36,26 @@ int main()
 		printf("Spawned process %i\n", processID);
 		return 0;
 	}
-	
+
+  // Clean up old pipes if they exist
+  if(remove(PIPE_IN_NAME))
+  {
+    printf("Error deleting pipe '%s'\n", PIPE_IN_NAME);
+  }
+  else
+  {
+    printf("Sucessfully deleted pipe '%s'\n", PIPE_IN_NAME);
+  }
+
+  if(remove(PIPE_OUT_NAME))
+  {
+    printf("Error deleting pipe '%s'\n", PIPE_OUT_NAME);
+  }
+  else
+  {
+    printf("Sucessfully deleted pipe '%s'\n", PIPE_OUT_NAME);
+  }
+
 	// Making pipes...
 	if( mkfifo(PIPE_IN_NAME, S_IRWXU) == -1 )
 	{
@@ -73,6 +92,7 @@ int main()
 
     vendLog << asctime(timeinfo);
     vendLog << slotChoice;
+    
 #endif  
 
     vendSuccess = acmSoda.VendCan(atoi(slotChoice));
