@@ -103,8 +103,7 @@ int main()
 		vendPipeIn.getline(slotChoice, 256);
 
 #ifdef DEBUG
-    vendLog << getTime();
-    vendLog << slotChoice;
+    vendLog << getTime() << " " << slotChoice << "\n";
     
 #endif  
 
