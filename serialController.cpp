@@ -199,12 +199,21 @@ sleep(1);
 //cout<<"Turning off motor, should be auto-latched"<<endl;
 
 snprintf( CommandBuffer, sizeof(CommandBuffer), "V9" );
+do
+{
 retn = write( fd, CommandBuffer, strlen(CommandBuffer) );
 if( retn != 2 )
 	{
 	cout<<"Error writing to serial port"<<endl;
 	return -1;
 	}
+buf[ retn ] = 0x00;
+if( buf[ 0 ] != 'V' || buf[2] != 'Y')
+{
+  cout <<"Unknown return" << endl;
+  break;
+}
+}while(buf[2] != 'Y');
 
 memset( buf, 0x00, sizeof(buf) );
 retn = read( fd, buf, sizeof(buf) );
