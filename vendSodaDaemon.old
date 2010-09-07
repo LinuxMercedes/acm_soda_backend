@@ -1,0 +1,46 @@
+#include <fstream>
+#include <cstdlib>
+#include "serialDriver.h"
+#include <sys/stat.h>
+
+#define FIFO_NAME "/tmp/vendsodafifo"
+
+using namespace std;
+
+int main()
+{
+	char slotChoice[256];
+	fstream vendFifoIn;
+	int processID;
+	
+	processID = fork();
+	
+	if(processID)
+	{
+		printf("Spawned process %i\n", processID);
+		return 0;
+	}
+	
+	if( mkfifo(FIFO_NAME, S_IRWXU) == -1 )
+	{
+		fprintf(stderr, "Error creating pipe '%s'\n", FIFO_NAME);
+		exit(-1);
+	}
+	chmod(FIFO_NAME, S_IRWXU|S_IWOTH);
+	
+	serialDriver acmSoda("/dev/ttyS0", "output");
+	
+	while(1)
+	{
+		vendFifoIn.open(FIFO_NAME, fstream::in);
+		
+		vendFifoIn.getline(slotChoice, 256);
+		
+		acmSoda.VendCan(atoi(slotChoice));
+		
+		//printf("Vended soda %i\n", atoi(slotChoice) );
+		
+		vendFifoIn.close();
+	}
+	return 0;
+}
